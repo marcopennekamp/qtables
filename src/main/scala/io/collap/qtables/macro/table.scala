@@ -41,12 +41,52 @@ class table(entityQuery: Any) extends StaticAnnotation {
 
       val entityType = entityTypes.head
 
+      // TODO: We need to check that the entity type is a subtype of HasKey, but this doesn't seem to be possible with scalameta right now (without a semantic API).
+
+      // FIXME: The update(key, _ -> _, ...) method doesn't seem to get compiled properly (should result in a dynamic query).
       q"""
-    ..$mods class $tname[..$tparams] ..$ctorMods(...$paramss) extends ${withTypes.head} with ..${withTypes.tail} {
-      val qt = quote($entityQuery)
-      ..$body
-    }
-    """
+      ..$mods class $tname[..$tparams] ..$ctorMods(...$paramss) extends ${withTypes.head} with ..${withTypes.tail} {
+        val qt = quote($entityQuery)
+
+        def qtFindByKey = quote { key: $entityType#Key =>
+          qt.filter(e => e.key == key)
+        }
+
+        override def list() = run(qt)
+
+        override def insert(value: $entityType): $entityType = {
+          run(qt.insert(lift(value))).checkInsertion()
+          value
+        }
+
+        override def insertMany(items: List[$entityType]): Unit = {
+          run(liftQuery(items).foreach(c => qt.insert(c))).checkInsertions()
+        }
+
+        override def update(value: $entityType): Unit = {
+          run(qtFindByKey(lift(value.key)).update(lift(value))).checkUpdate()
+        }
+
+        override def update(key: $entityType#Key, f: (($entityType) => (Any, Any)), f2: (($entityType) => (Any, Any))*): Unit = {
+          run(qtFindByKey(lift(key)).update(f, f2: _*)).checkUpdate()
+        }
+
+        override def delete(key: $entityType#Key): Unit = {
+          run(qtFindByKey(lift(key)).delete).checkDeletion()
+        }
+
+        override def find(key: $entityType#Key): Option[$entityType] = {
+          run(qtFindByKey(lift(key))).headOption
+        }
+
+        // This method isn't part of Table, since it has a Quoted as a parameter.
+        def findOne(p: Quoted[($entityType) => Boolean]): Option[$entityType] = {
+          run(qt.filter(e => p(e))).headOption
+        }
+
+        ..$body
+      }
+      """
     }
 
     val out = defn match {
