@@ -1,4 +1,4 @@
-package io.collap.qtables
+package io.collap.qtables.annotation
 
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
 import scala.language.experimental.macros
@@ -7,9 +7,8 @@ import scala.language.experimental.macros
   * TODO: Document.
   *
   * @param entityQuery
-  * @tparam T
   */
 @compileTimeOnly("Enable macro paradise to expand macro annotations.")
-class table[T](entityQuery: Any) extends StaticAnnotation {
+class table(entityQuery: Any) extends StaticAnnotation {
   def macroTransform(annottees: Any*): Any = macro TableMacro.impl
 }

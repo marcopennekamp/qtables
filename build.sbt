@@ -2,7 +2,7 @@ val paradiseVersion = "2.1.0"
 
 name := "qtables"
 organization := "io.collap"
-version := "0.1.0-SNAPSHOT"
+version := "0.2.0-SNAPSHOT"
 
 resolvers += Resolver.sonatypeRepo("releases")
 resolvers += Resolver.sonatypeRepo("snapshots")
