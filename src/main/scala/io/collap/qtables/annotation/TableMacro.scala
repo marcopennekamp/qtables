@@ -41,6 +41,8 @@ object TableMacro {
         "\nExample: @table(query[User])")
     }
 
+    // FIXME: The update(key, _ -> _, ...) method doesn't seem to get compiled properly (should result in a dynamic query).
+
     val out = annottees.map(_.tree) match {
       case q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { ..$stats }" :: Nil =>
         val entityType = extractEntityType(parents)
