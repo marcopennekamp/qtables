@@ -10,6 +10,7 @@ trait Table[A <: HasKey] extends ActionChecks {
     * Inserts a value into the database.
     * @return The inserted row.
     */
+  // TODO: When the A type has a generated Id as its key, we need to return the Id for newly inserted rows.
   def insert(value: A): A
 
   /**
