@@ -1,4 +1,4 @@
-package io.collap.qtables.`macro`
+package io.collap.qtables.annotation
 
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
 import scala.meta._
