@@ -2,6 +2,25 @@ package io.collap.qtables
 
 trait Table[A <: HasKey] extends ActionChecks {
   /**
+    * The actual Quill Context.Quoted type.
+    */
+  type Quoted[Q]
+
+  /**
+    * The actual Quill Context.EntityQuery type.
+    */
+  type EntityQuery[T]
+
+  /**
+    * The query quote is declared here, so that the IDE (IntelliJ) can find
+    * the qt symbol. This is currently a workaround for lackluster Scala macro
+    * tooling in IDEs.
+    *
+    * We may write a plugin in the future, instead.
+    */
+  val qt: Quoted[EntityQuery[A]]
+
+  /**
     * @return All rows in the database.
     */
   def list(): Seq[A]

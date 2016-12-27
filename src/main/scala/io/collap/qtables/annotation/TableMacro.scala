@@ -11,6 +11,11 @@ object TableMacro {
     import c.universe._
 
     val tableClassName = TypeName(classOf[Table[_]].getSimpleName)
+
+    // FIXME: We should extract the entity type based on the type hierarchy, not a name.
+    // Otherwise problems like this one appear: class UserTable extends TestTable[User] with Table[User]
+    // We have to add a 'with Table[User]', because the macro doesn't see the TestTable as a Table.
+    // A perhaps more elegant solution: Fetch the entity type of the query to get the entity type.
     def extractEntityType(parents: Seq[Trees#Tree]): Ident = {
       // The head of the parent list (extends ...) has to be treated in a special way.
       val q"${tq"${firstParentName: TypeName}[..$firstParentTargs]"}(...$_)" = parents.head
