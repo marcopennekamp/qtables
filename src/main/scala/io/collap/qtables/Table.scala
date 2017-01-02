@@ -29,14 +29,12 @@ trait Table[A <: HasKey] extends ActionChecks {
     * Inserts a value into the database.
     * @return The inserted row.
     */
-  // TODO: When the A type has a generated Id as its key, we need to return the Id for newly inserted rows.
   def insert(value: A): A
 
   /**
     * Inserts a list of values into the database.
     */
-  // TODO: Return a list of inserted items?
-  def insertMany(items: List[A]): Unit
+  def insertMany(items: List[A]): List[A]
 
   /**
     * Updates the row corresponding to the key of the parameter.
@@ -49,8 +47,10 @@ trait Table[A <: HasKey] extends ActionChecks {
 
   /**
     * Updates specific attributes of the row corresponding to the key.
+    *
+    * Note: Not yet implemented.
     */
-  def update(key: A#Key, f: (A => (Any, Any)), f2: (A => (Any, Any))*): Unit
+  //def update(key: A#Key, f: (A => (Any, Any)), f2: (A => (Any, Any))*): Unit
 
   /**
     * Deletes the row corresponding to the key.
