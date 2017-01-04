@@ -21,6 +21,17 @@ trait Table[A <: HasKey] extends ActionChecks {
   val qt: Quoted[EntityQuery[A]]
 
   /**
+    * Finds the row identified by the key.
+    */
+  def qtFind: Quoted[A#Key => EntityQuery[A]]
+
+  /**
+    * This needs to be implemented by every table right now.
+    * It's used to implement qtFind based on the key of the entity.
+    */
+  def qtFilterByKey: Quoted[A#Key => A => Boolean]
+
+  /**
     * @return All rows in the database.
     */
   def list(): Seq[A]

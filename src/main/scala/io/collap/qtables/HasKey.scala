@@ -1,8 +1,7 @@
 package io.collap.qtables
 
 /**
-  * [[HasKey]] can be added to a database object type, where an instance of that type is a single row
-  * in the database.
+  * [[HasKey]] describes a database row that can be uniquely found with a key.
   */
 trait HasKey {
   type Key

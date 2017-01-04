@@ -87,13 +87,14 @@ object TableMacro {
           )
         }
 
+        // TODO: We should support findOne without making it a dynamic query (if possible).
         c.Expr[Any](
           q"""
           $mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents {
             val qt = quote($entityQuery)
 
-            def qtFindByKey = quote { (key: $entityTypeTree#Key) =>
-              qt.filter(e => e.key == key)
+            override def qtFind = quote { (key: $entityTypeTree#Key) =>
+              qt.filter(e => qtFilterByKey(key)(e))
             }
 
             override def list() = run(qt)
@@ -101,25 +102,24 @@ object TableMacro {
             ..$insertMethods
 
             override def update(value: $entityTypeTree): Unit = {
-              run(qtFindByKey(lift(value.key)).update(lift(value))).checkUpdate()
+              run(qtFind(lift(value.key)).update(lift(value))).checkUpdate()
             }
 
             override def delete(key: $entityTypeTree#Key): Unit = {
-              run(qtFindByKey(lift(key)).delete).checkDeletion()
+              run(qtFind(lift(key)).delete).checkDeletion()
             }
 
             override def find(key: $entityTypeTree#Key): Option[$entityTypeTree] = {
-              run(qtFindByKey(lift(key))).headOption
-            }
-
-            // This method isn't part of Table, since it has a Quoted as a parameter.
-            def findOne(p: Quoted[($entityTypeTree) => Boolean]): Option[$entityTypeTree] = {
-              run(qt.filter(e => p(e))).headOption
+              run(qtFind(lift(key))).headOption
             }
 
             ..$stats
           }
           """
+          // This method isn't part of Table, since it has a Quoted as a parameter.
+          //def findOne(p: Quoted[($entityTypeTree) => Boolean]): Option[$entityTypeTree] = {
+          //  run(qt.filter(e => p(e))).headOption
+          //}
         )
       case _ => c.abort(c.enclosingPosition, "The annottee of @table must be any class.")
     }
