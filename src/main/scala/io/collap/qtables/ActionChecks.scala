@@ -48,3 +48,7 @@ trait ActionChecks {
     def checkDeletion() = check("Deletion")
   }
 }
+
+object ActionChecks extends ActionChecks {
+
+}
