@@ -47,7 +47,15 @@ object TableMacro {
     }
 
     val out = annottees.map(_.tree) match {
-      case q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { ..$stats }" :: Nil =>
+      case q"$mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents { ..$stats }" :: maybeObject =>
+        // We want to match any companion object that might be attached to the table class
+        // and output it without transforming it.
+        val companion = maybeObject match {
+          case Nil => q""
+          case q"$mods object $tname extends { ..$earlydefns } with ..$parents { $self => ..$body }" :: Nil =>
+            q"$mods object $tname extends { ..$earlydefns } with ..$parents { $self => ..$body }"
+        }
+
         val entityTypeTree = extractEntityTypeTree(parents)
         val entityType = c.typecheck(entityTypeTree, c.TYPEmode).tpe
 
@@ -87,9 +95,7 @@ object TableMacro {
           )
         }
 
-        // TODO: We should support findOne without making it a dynamic query (if possible).
-        c.Expr[Any](
-          q"""
+        val classExpr = q"""
           $mods class $name[..$tparams] $ctorMods(...$paramss) extends { ..$earlydefns } with ..$parents {
             val qt = quote($entityQuery)
 
@@ -115,16 +121,27 @@ object TableMacro {
 
             ..$stats
           }
-          """
-          // This method isn't part of Table, since it has a Quoted as a parameter.
-          //def findOne(p: Quoted[($entityTypeTree) => Boolean]): Option[$entityTypeTree] = {
-          //  run(qt.filter(e => p(e))).headOption
-          //}
+        """
+        // This method isn't part of Table, since it has a Quoted as a parameter.
+        //def findOne(p: Quoted[($entityTypeTree) => Boolean]): Option[$entityTypeTree] = {
+        //  run(qt.filter(e => p(e))).headOption
+        //}
+
+        // TODO: We should support findOne without making it a dynamic query (if possible).
+        c.Expr[Any](
+          if (companion.isEmpty) {
+            classExpr
+          } else {
+            q"""
+            $classExpr
+            $companion
+            """
+          }
         )
-      case _ => c.abort(c.enclosingPosition, "The annottee of @table must be any class.")
+      case x => c.abort(c.enclosingPosition, "The annottee of @table must be any class.\nGot: " + x.toString())
     }
 
-    println(out.toString())
+    //println(out.toString())
 
     out
   }

@@ -11,3 +11,7 @@ class UserTable extends TestTable[User] with Table[User] {
     run(qt.filter(_.name == lift("Marco")))
   }
 }
+
+object UserTable {
+  val exampleTable = new UserTable
+}
