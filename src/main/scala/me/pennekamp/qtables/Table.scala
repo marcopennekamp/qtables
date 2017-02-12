@@ -1,4 +1,6 @@
-package io.collap.qtables
+package me.pennekamp.qtables
+
+import scala.language.higherKinds
 
 trait Table[A <: HasKey] extends ActionChecks {
   /**

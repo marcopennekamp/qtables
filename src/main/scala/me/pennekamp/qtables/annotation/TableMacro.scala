@@ -1,6 +1,6 @@
-package io.collap.qtables.annotation
+package me.pennekamp.qtables.annotation
 
-import io.collap.qtables.{HasId, Table}
+import me.pennekamp.qtables.{HasId, Table}
 
 import scala.language.experimental.macros
 import scala.reflect.api.Trees

@@ -1,4 +1,4 @@
-package io.collap.qtables
+package me.pennekamp.qtables
 
 import java.io.Closeable
 import javax.sql.DataSource

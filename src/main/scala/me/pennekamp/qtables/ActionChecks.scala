@@ -1,4 +1,4 @@
-package io.collap.qtables
+package me.pennekamp.qtables
 
 trait ActionChecks {
   implicit class BulkActionChecker(seq: Seq[Long]) {

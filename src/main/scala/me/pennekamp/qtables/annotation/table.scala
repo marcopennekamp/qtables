@@ -1,4 +1,4 @@
-package io.collap.qtables.annotation
+package me.pennekamp.qtables.annotation
 
 import scala.annotation.{StaticAnnotation, compileTimeOnly}
 import scala.language.experimental.macros

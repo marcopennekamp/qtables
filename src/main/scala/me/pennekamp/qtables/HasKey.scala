@@ -1,4 +1,4 @@
-package io.collap.qtables
+package me.pennekamp.qtables
 
 /**
   * [[HasKey]] describes a database row that can be uniquely found with a key.

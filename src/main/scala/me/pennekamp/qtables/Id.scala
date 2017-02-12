@@ -1,4 +1,4 @@
-package io.collap.qtables
+package me.pennekamp.qtables
 
 import io.getquill.MappedEncoding
 

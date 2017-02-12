@@ -1,7 +1,7 @@
-package io.collap.qtables
+package me.pennekamp.qtables
 
 import QuillContext.{lift, query, _}
-import io.collap.qtables.annotation.table
+import me.pennekamp.qtables.annotation.table
 
 @table(query[User])
 class UserTable extends TestTable[User] with Table[User] {

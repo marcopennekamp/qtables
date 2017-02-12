@@ -1,4 +1,4 @@
-package io.collap.qtables
+package me.pennekamp.qtables
 
 trait HasId[A] extends HasKey {
   override type Key = Id[A]
